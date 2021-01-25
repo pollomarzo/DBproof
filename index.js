@@ -9,7 +9,6 @@ app.use(bodyParser.json());
 let watchData = [];
 let playlists = [];
 
-app.post('/account', (req, res) => {});
 
 app.get('/profile', (req, res) => {
   res.status(200).json([
@@ -27,6 +26,11 @@ app.get('/item', (req, res) => {
   ]);
 }); //codice, nome
 
+app.get('/playlist', (req, res) => {
+  res.status(200).json(playlists);
+});
+
+app.post('/account', (req, res) => {});
 app.post('/cast', (req, res) => {});
 
 app.post('/feedback', (req, res) => {});

@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
+  Select,
   MenuItem,
   Paper,
   Typography,
   makeStyles,
   Button,
-} from '@material-ui/core';
-import { useForm } from 'react-hook-form';
-import useFetch from 'react-fetch-hook';
+  InputLabel,
+  FormControl,
+  TextField,
+} from "@material-ui/core";
+import { useForm } from "react-hook-form";
+import useFetch from "react-fetch-hook";
 
-import Select from '../Select';
-import { PLAYLIST_URL, ITEM_URL, PROFILE_URL } from '../constants';
+import { PLAYLIST_URL, ITEM_URL, PROFILE_URL } from "../constants";
 
 /**
  * - insert new playlist:
@@ -21,18 +24,20 @@ import { PLAYLIST_URL, ITEM_URL, PROFILE_URL } from '../constants';
 const useStyles = makeStyles((theme) => ({
   container: {
     background: theme.palette.background.default,
+    display:'flex',
+    flexDirection: 'column',
   },
   paper: {
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
   },
   select: {
-    display: 'inline-block',
+    display: "inline-block",
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
-    width: '50%',
-    '& > *': {
-      width: '100%',
+    width: "50%",
+    "& > *": {
+      width: "100%",
     },
   },
 }));
@@ -40,9 +45,12 @@ const useStyles = makeStyles((theme) => ({
 const Playlist = () => {
   const classes = useStyles();
 
-  const [profile, setProfile] = useState('');
-  const [item, setItem] = useState('');
+  // selects and their contents, plus playlist name
+  const [profile, setProfile] = useState("");
+  const [item, setItem] = useState("");
+  const [name, setName] = useState("");
 
+  // initial data fetching
   const { data: playlists, isLoading: isLoadingPlaylists } = useFetch(
     PLAYLIST_URL
   );
@@ -50,20 +58,28 @@ const Playlist = () => {
   const { data: profiles, isLoading: isLoadingProfiles } = useFetch(
     PROFILE_URL
   );
+
+  // list of contents selected for playlist
   const [inList, setInList] = useState([]);
-  const [result, setResult] = useState('');
+
+  // result obtained from database query
+  const [result, setResult] = useState("");
 
   const isLoading = isLoadingPlaylists || isLoadingItems || isLoadingProfiles;
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const onSubmit = async (_) => {
     try {
       const resData = await fetch(PLAYLIST_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          nome: name,
+          profilo: profile,
+          account: profile.codice_account,
+          contenuti: items,
+        }),
       }).then((res) => res.json());
       setResult(resData);
       console.log(resData);
@@ -82,77 +98,59 @@ const Playlist = () => {
         <Typography variant="subtitle1">
           Insert new rel bit prof cont
         </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <FormControl variant="filled">
-              <InputLabel id="Profilo">Profilo</InputLabel>
-              <Select
-                labelId="Profilo"
-                id="demo-simple-select-filled"
-                value={playlist.profile}
-                onChange={handleProfile}
-              >
-                {profiles.map((profile) => (
-                  <MenuItem
-                    key={`${profile.codice_account}_${profile.numero}`}
-                    value={{
-                      codice_account: profile.codice_account,
-                      numero: profile.numero,
-                    }}
-                  >
-                    {profile.nickname}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <TextField
+              label="Nome playlist"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div>
+            <Select
+              label="Profilo"
+              id="profilo"
+              value={profile}
+              onChange={(e) => setProfile(e.target.value)}
+            >
+              {profiles.map((profile) => (
+                <MenuItem
+                  key={`${profile.codice_account}_${profile.numero}`}
+                  value={profile}
+                >
+                  {profile.nickname}
+                </MenuItem>
+              ))}
+            </Select>
           </div>
           <div>
             <div>
-              <FormControl variant="filled" className={classes.formControl}>
-                <InputLabel id="demo-simple-select-filled-label">
-                  Age
-                </InputLabel>
-                <Select
-                  variant="filled"
-                  labelId="Contenuto"
-                  id="content_form"
-                  value={age}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
               <Select
                 variant="filled"
                 label="Contenuto"
-                name="codice_contenuto"
-                control={control}
-                defaultValue=""
+                id="content_form"
+                value={item}
+                onChange={(e) => setItem(e.target.value)}
               >
                 {items.map((item) => (
-                  <MenuItem key={item.codice} value={item.codice}>
+                  <MenuItem key={item.codice} value={item}>
                     {item.nome}
                   </MenuItem>
                 ))}
               </Select>
-              <Button
-                variant="contained"
-                onClick={() => inList.push(/**selected item */)}
-              >
-                Aggiungi contenuto
-              </Button>
             </div>
+            <Button
+              variant="contained"
+              onClick={() => setInList([...inList, item])}
+              disabled={item === "" || !!inList.find((content) => item.codice === content.codice)}
+            >
+              Aggiungi contenuto
+            </Button>
+            <Typography variant="body2">Currently in list: </Typography>
             {inList.map((item) => (
-              <div>{item.nome}</div>
+              <div key={item.codice}>{item.nome}</div>
             ))}
           </div>
-          <Button type="submit">Confirm</Button>
-        </form>
+          <Button onClick={onSubmit} disabled={profile === '' || name === '' || inList == []}>Confirm</Button>
       </Paper>
       <Paper className={classes.paper}>
         <Typography>Playlists</Typography>
