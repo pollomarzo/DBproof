@@ -96,7 +96,7 @@ const Playlist = () => {
     <div className={classes.container}>
       <Paper className={classes.paper}>
         <Typography variant="subtitle1">
-          Insert new rel bit prof cont
+          Insert new playlist with related content
         </Typography>
           <div>
             <TextField

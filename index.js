@@ -41,7 +41,7 @@ app.post('/playlist', (req, res) => {
 });
 
 app.get('/watch', (req, res) => {
-  res.status(200).json([]);
+  res.status(200).json(watchData);
 });
 
 app.post('/watch', (req, res) => {

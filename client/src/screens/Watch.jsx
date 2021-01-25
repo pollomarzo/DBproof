@@ -5,11 +5,11 @@ import {
   Typography,
   makeStyles,
   Button,
+  Select
 } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import useFetch from 'react-fetch-hook';
 
-import Select from '../Select';
 import { WATCH_URL, ITEM_URL, PROFILE_URL } from '../constants';
 
 /**
@@ -39,27 +39,33 @@ const useStyles = makeStyles((theme) => ({
 const Watch = () => {
   const classes = useStyles();
 
-  const { handleSubmit, control } = useForm();
-  const { data: watchData, isLoading: isLoadingWatch } = useFetch(WATCH_URL);
+  // selects and their contents, plus playlist name
+  const [profile, setProfile] = useState("");
+  const [item, setItem] = useState("");
+
   const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
   const { data: profiles, isLoading: isLoadingProfiles } = useFetch(
     PROFILE_URL
   );
-  const [datino, setDatino] = useState('[]');
 
-  const isLoading = isLoadingWatch || isLoadingItems || isLoadingProfiles;
+  // result obtained from database query
+  const [result, setResult] = useState("");
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const isLoading = isLoadingItems || isLoadingProfiles;
+
+  const onSubmit = async (_) => {
     try {
       const resData = await fetch(WATCH_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          profilo: profile,
+          contenuto: item,
+        }),
       }).then((res) => res.json());
-      setDatino(resData);
+      setResult(resData);
       console.log(resData);
     } catch (err) {
       console.error(err);
@@ -74,51 +80,50 @@ const Watch = () => {
     <div className={classes.container}>
       <Paper className={classes.paper}>
         <Typography variant="subtitle1">
-          Insert new rel bit prof cont
+          Insert new watched content for a profile
         </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={classes.select}>
-            <Select
-              variant="filled"
-              label="Profilo"
-              name="profilo"
-              control={control}
-              defaultValue=""
-            >
-              {profiles.map((profile) => (
-                <MenuItem
-                  key={`${profile.codice_account}_${profile.numero}`}
-                  value={{
-                    codice_account: profile.codice_account,
-                    numero: profile.numero,
-                  }}
-                >
-                  {profile.nickname}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-          <div className={classes.select}>
+        <div>
+          <Select
+            label="Profilo"
+            id="profilo"
+            value={profile}
+            onChange={(e) => setProfile(e.target.value)}
+          >
+            {profiles.map((profile) => (
+              <MenuItem
+                key={`${profile.codice_account}_${profile.numero}`}
+                value={profile}
+              >
+                {profile.nickname}
+              </MenuItem>
+            ))}
+          </Select>
+        </div>
+        <div>
+          <div>
             <Select
               variant="filled"
               label="Contenuto"
-              name="codice_contenuto"
-              control={control}
-              defaultValue=""
+              id="content_form"
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
             >
               {items.map((item) => (
-                <MenuItem key={item.codice} value={item.codice}>
+                <MenuItem key={item.codice} value={item}>
                   {item.nome}
                 </MenuItem>
               ))}
             </Select>
           </div>
-          <Button type="submit">Confirm</Button>
-        </form>
+          <Button onClick={onSubmit} disabled={profile === "" || item === ""}>
+            Confirm
+          </Button>
+        </div>
       </Paper>
+
       <Paper className={classes.paper}>
-        <Typography>Guarda</Typography>
-        <code>{JSON.stringify(datino, null, 2)}</code>
+        <Typography>Watched content</Typography>
+        <code>{JSON.stringify(result, null, 2)}</code>
       </Paper>
     </div>
   );
