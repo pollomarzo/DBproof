@@ -78,7 +78,7 @@ const Playlist = () => {
           nome: name,
           profilo: profile,
           account: profile.codice_account,
-          contenuti: items,
+          contenuti: inList,
         }),
       }).then((res) => res.json());
       setResult(resData);
