@@ -8,7 +8,8 @@ app.use(bodyParser.json());
 
 let watchData = [];
 let playlists = [];
-
+let cast = [];
+let feedback = [];
 
 app.get('/profile', (req, res) => {
   res.status(200).json([
@@ -30,10 +31,25 @@ app.get('/playlist', (req, res) => {
   res.status(200).json(playlists);
 });
 
-app.post('/account', (req, res) => {});
-app.post('/cast', (req, res) => {});
+app.get('/cast', (req, res) => {
+  res.status(200).json(cast);
+});
 
-app.post('/feedback', (req, res) => {});
+app.get('/feedback', (req, res) => {
+  res.status(200).json(feedback);
+});
+
+app.post('/account', (req, res) => {});
+
+app.post('/cast', (req, res) => {
+  cast.push(req.body);
+  res.status(200).json(cast);
+});
+
+app.post('/feedback', (req, res) => {
+  feedback.push(req.body);
+  res.status(200).json(feedback);
+});
 
 app.post('/playlist', (req, res) => {
   playlists.push(req.body);

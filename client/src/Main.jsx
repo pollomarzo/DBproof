@@ -4,15 +4,10 @@ import { AppBar, Container, Tabs, Tab, Typography } from '@material-ui/core';
 
 import { Account, Cast, Feedback, Item, Playlist, Watch } from './screens';
 
-const TabPanel = ({ children, title, value, index, ...other }) => {
+const TabPanel = ({ children, value, index, ...other }) => {
   return (
     <div hidden={value !== index} {...other}>
-      {value === index && (
-        <Container>
-          <Typography variant="h1">{title}</Typography>
-          {children}
-        </Container>
-      )}
+      {value === index && <Container>{children}</Container>}
     </div>
   );
 };
@@ -43,22 +38,22 @@ const Main = () => {
           <Tab label="Guarda" />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0} title="Account">
+      <TabPanel value={value} index={0}>
         <Account />
       </TabPanel>
-      <TabPanel value={value} index={1} title="Cast">
+      <TabPanel value={value} index={1}>
         <Cast />
       </TabPanel>
-      <TabPanel value={value} index={2} title="Item">
+      <TabPanel value={value} index={2}>
         <Item />
       </TabPanel>
-      <TabPanel value={value} index={3} title="Feedback">
+      <TabPanel value={value} index={3}>
         <Feedback />
       </TabPanel>
-      <TabPanel value={value} index={4} title="Playlist">
+      <TabPanel value={value} index={4}>
         <Playlist />
       </TabPanel>
-      <TabPanel value={value} index={5} title="Watch">
+      <TabPanel value={value} index={5}>
         <Watch />
       </TabPanel>
     </div>
