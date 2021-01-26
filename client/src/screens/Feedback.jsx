@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo } from 'react';
 import {
   Select,
   MenuItem,
@@ -14,42 +14,54 @@ import {
   TextField,
   Slider,
   RadioGroup,
-} from "@material-ui/core";
-import { useForm } from "react-hook-form";
-import useFetch from "react-fetch-hook";
+} from '@material-ui/core';
+import { useForm } from 'react-hook-form';
+import useFetch from 'react-fetch-hook';
 
-import { ITEM_URL, PROFILE_URL, FEEDBACK_URL } from "../constants";
+import { ITEM_URL, PROFILE_URL, FEEDBACK_URL } from '../constants';
+import PageGrid from '../PageGrid';
+import ItemTable from '../tables/ItemTable';
+import ProfileTable from '../tables/ProfileTable';
+import FeedbackTable from '../tables/FeedbackTable';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     background: theme.palette.background.default,
-    display: "flex",
-    "& > *": {
-      width: "50%",
+    display: 'flex',
+    '& > *': {
+      width: '50%',
     },
   },
   paper: {
     padding: theme.spacing(3),
-    margin: theme.spacing(3),
   },
   header: {
-    "& > :first-child": {
+    '& > :first-child': {
       marginBottom: theme.spacing(1),
     },
-    "& > :last-child": {
+    '& > :last-child': {
       marginBottom: theme.spacing(3),
     },
   },
   inputs: {
-    display: "flex",
-    flexDirection: "column",
-    "& > *": {
-      width: "100%",
+    display: 'flex',
+    flexDirection: 'column',
+    '& > *': {
+      width: '100%',
       marginBottom: theme.spacing(4),
     },
   },
   btnWrapper: {
-    textAlign: "right",
+    textAlign: 'right',
+  },
+  inputsRow: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
+    '& > *': {
+      flex: '0 1 48%',
+    },
   },
 }));
 
@@ -66,15 +78,15 @@ const Feedback = () => {
   const classes = useStyles();
 
   // profile, item
-  const [profile, setProfile] = useState("");
-  const [item, setItem] = useState("");
+  const [profile, setProfile] = useState('');
+  const [item, setItem] = useState('');
 
   // radio value
-  const [type, setType] = useState("rating");
+  const [type, setType] = useState('rating');
 
   // rating and comment
   const [rating, setRating] = useState(3);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
 
   // initial data fetching
   const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
@@ -83,13 +95,13 @@ const Feedback = () => {
   );
 
   // result obtained from database query
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState([]);
 
   const isLoading = isLoadingItems || isLoadingProfiles;
 
   const submitBody = useMemo(
     () =>
-      type === "rating"
+      type === 'rating'
         ? {
             profilo: profile,
             contenuto: item,
@@ -106,9 +118,9 @@ const Feedback = () => {
   const onSubmit = async (_) => {
     try {
       const resData = await fetch(FEEDBACK_URL, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(submitBody),
       }).then((res) => res.json());
@@ -124,42 +136,44 @@ const Feedback = () => {
   }
 
   return (
-    <div className={classes.container}>
+    <PageGrid>
       <Paper className={classes.paper}>
         <Typography variant="subtitle1">
           Insert new rating on content
         </Typography>
-        <div>
-          <Select
-            label="Profilo"
-            id="profilo"
-            value={profile}
-            onChange={(e) => setProfile(e.target.value)}
-          >
-            {profiles.map((profile) => (
-              <MenuItem
-                key={`${profile.codice_account}_${profile.numero}`}
-                value={profile}
-              >
-                {profile.nickname}
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <Select
-            variant="filled"
-            label="Contenuto"
-            id="content_form"
-            value={item}
-            onChange={(e) => setItem(e.target.value)}
-          >
-            {items.map((item) => (
-              <MenuItem key={item.codice} value={item}>
-                {item.nome}
-              </MenuItem>
-            ))}
-          </Select>
+        <div className={classes.inputsRow}>
+          <FormControl variant="filled">
+            <InputLabel id="profile-label">Profilo</InputLabel>
+            <Select
+              labelId="profile-label"
+              value={profile}
+              onChange={(e) => setProfile(e.target.value)}
+            >
+              {profiles.map((profile) => (
+                <MenuItem
+                  key={`${profile.codice_account}_${profile.numero}`}
+                  value={profile}
+                >
+                  {profile.nickname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl variant="filled">
+            <InputLabel id="item-label">Contenuto</InputLabel>
+            <Select
+              variant="filled"
+              labelId="item-label"
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
+            >
+              {items.map((item) => (
+                <MenuItem key={item.codice} value={item}>
+                  {item.nome}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
         <FormControl component="fieldset">
           <FormLabel component="legend">Tipo di Opinione</FormLabel>
@@ -179,7 +193,7 @@ const Feedback = () => {
         </FormControl>
         {/** will keep rating and comment cleanly apart for clarity. confirm button is NOT shared */}
         {/**RATING SECTION */}
-        {type === "rating" && (
+        {type === 'rating' && (
           <>
             <div>
               <Slider
@@ -191,43 +205,44 @@ const Feedback = () => {
                 max={5}
               />
             </div>
-
             <Button
               onClick={onSubmit}
-              disabled={profile === "" || item === "" || rating === ""}
+              disabled={profile === '' || item === '' || rating === ''}
             >
               Confirm
             </Button>
           </>
         )}
         {/**COMMENT SECTION */}
-        {type === "comment" && (
+        {type === 'comment' && (
           <>
-            <TextField
-              id="comment_box"
-              label="Commento"
-              multiline
-              value={comment}
-              onChange={(e) =>
-                e.target.value.length <= 200 && setComment(e.target.value)
-              }
-              error={comment.length === 200}
-              helperText={comment.length === 200 && "Commento troppo lungo"}
-            />
+            <div>
+              <TextField
+                variant="filled"
+                id="comment_box"
+                label="Commento"
+                multiline
+                value={comment}
+                onChange={(e) =>
+                  e.target.value.length <= 200 && setComment(e.target.value)
+                }
+                error={comment.length === 200}
+                helperText={comment.length === 200 && 'Commento troppo lungo'}
+              />
+            </div>
             <Button
               onClick={onSubmit}
-              disabled={profile === "" || item === "" || comment === ""}
+              disabled={profile === '' || item === '' || comment === ''}
             >
               Confirm
             </Button>
           </>
         )}
       </Paper>
-      <Paper className={classes.paper}>
-        <Typography>Ratings</Typography>
-        <code>{JSON.stringify(result, null, 2)}</code>
-      </Paper>
-    </div>
+      <FeedbackTable feedbacks={result} />
+      <ProfileTable profiles={profiles} />
+      <ItemTable items={items} />
+    </PageGrid>
   );
 };
 

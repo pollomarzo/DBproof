@@ -15,17 +15,18 @@ let profiles = [
   { codice_account: 123, numero: 2, nickname: 'antonio' },
   { codice_account: 2, numero: 1, nickname: 'giovanni' },
 ];
+let items = [
+  { codice: 1234, nome: 'alien' },
+  { codice: 234, nome: 'fuck you' },
+  { codice: 34, nome: 'idiot' },
+];
 
 app.get('/profile', (req, res) => {
   res.status(200).json(profiles);
 }); //codice_account, numero
 
 app.get('/item', (req, res) => {
-  res.status(200).json([
-    { codice: 1234, nome: 'alien' },
-    { codice: 234, nome: 'fuck you' },
-    { codice: 34, nome: 'idiot' },
-  ]);
+  res.status(200).json(items);
 }); //codice, nome
 
 app.get('/playlist', (req, res) => {
@@ -53,6 +54,11 @@ app.post('/cast', (req, res) => {
 app.post('/feedback', (req, res) => {
   feedback.push(req.body);
   res.status(200).json(feedback);
+});
+
+app.post('/item', (req, res) => {
+  // remember to include item code in episodes
+  res.status(200).json(items);
 });
 
 app.post('/playlist', (req, res) => {

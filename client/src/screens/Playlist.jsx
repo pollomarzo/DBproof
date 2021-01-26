@@ -14,6 +14,10 @@ import { useForm } from 'react-hook-form';
 import useFetch from 'react-fetch-hook';
 
 import { PLAYLIST_URL, ITEM_URL, PROFILE_URL } from '../constants';
+import PageGrid from '../PageGrid';
+import PlaylistTable from '../tables/PlaylistTable';
+import ProfileTable from '../tables/ProfileTable';
+import ItemTable from '../tables/ItemTable';
 
 /**
  * - insert new playlist:
@@ -40,6 +44,15 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
   },
+  inputsRow: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
+    '& > *': {
+      flex: '0 1 48%',
+    },
+  },
 }));
 
 const Playlist = () => {
@@ -63,7 +76,7 @@ const Playlist = () => {
   const [inList, setInList] = useState([]);
 
   // result obtained from database query
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState([]);
 
   const isLoading = isLoadingPlaylists || isLoadingItems || isLoadingProfiles;
 
@@ -93,41 +106,41 @@ const Playlist = () => {
   }
 
   return (
-    <div className={classes.container}>
+    <PageGrid>
       <Paper className={classes.paper}>
         <Typography variant="subtitle1">
           Insert new playlist with related content
         </Typography>
-        <div>
+        <div className={classes.inputsRow}>
           <TextField
+            variant="filled"
             label="Nome playlist"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-        </div>
-        <div>
-          <Select
-            label="Profilo"
-            id="profilo"
-            value={profile}
-            onChange={(e) => setProfile(e.target.value)}
-          >
-            {profiles.map((profile) => (
-              <MenuItem
-                key={`${profile.codice_account}_${profile.numero}`}
-                value={profile}
-              >
-                {profile.nickname}
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <div>
+          <FormControl variant="filled">
+            <InputLabel id="profile-label">Profilo</InputLabel>
             <Select
-              variant="filled"
-              label="Contenuto"
-              id="content_form"
+              labelId="profile-label"
+              value={profile}
+              onChange={(e) => setProfile(e.target.value)}
+            >
+              {profiles.map((profile) => (
+                <MenuItem
+                  key={`${profile.codice_account}_${profile.numero}`}
+                  value={profile}
+                >
+                  {profile.nickname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className={classes.inputsRow}>
+          <FormControl variant="filled">
+            <InputLabel id="item-label">Contenuto</InputLabel>
+            <Select
+              labelId="item-label"
               value={item}
               onChange={(e) => setItem(e.target.value)}
             >
@@ -137,22 +150,22 @@ const Playlist = () => {
                 </MenuItem>
               ))}
             </Select>
-          </div>
-          <Button
-            variant="contained"
-            onClick={() => setInList([...inList, item])}
-            disabled={
-              item === '' ||
-              !!inList.find((content) => item.codice === content.codice)
-            }
-          >
-            Aggiungi contenuto
-          </Button>
-          <Typography variant="body2">Currently in list: </Typography>
-          {inList.map((item) => (
-            <div key={item.codice}>{item.nome}</div>
-          ))}
+          </FormControl>
         </div>
+        <Button
+          variant="contained"
+          onClick={() => setInList([...inList, item])}
+          disabled={
+            item === '' ||
+            !!inList.find((content) => item.codice === content.codice)
+          }
+        >
+          Aggiungi contenuto
+        </Button>
+        <Typography variant="body2">Currently in list: </Typography>
+        {inList.map((item) => (
+          <div key={item.codice}>{item.nome}</div>
+        ))}
         <Button
           onClick={onSubmit}
           disabled={profile === '' || name === '' || inList.length === 0}
@@ -160,11 +173,10 @@ const Playlist = () => {
           Confirm
         </Button>
       </Paper>
-      <Paper className={classes.paper}>
-        <Typography>Playlists</Typography>
-        <code>{JSON.stringify(result, null, 2)}</code>
-      </Paper>
-    </div>
+      <PlaylistTable playlists={result} />
+      <ProfileTable profiles={profiles} />
+      <ItemTable items={items} />
+    </PageGrid>
   );
 };
 

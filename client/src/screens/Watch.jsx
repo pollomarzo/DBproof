@@ -16,6 +16,7 @@ import { WATCH_URL, ITEM_URL, PROFILE_URL } from '../constants';
 import WatchTable from '../tables/WatchTable';
 import ProfileTable from '../tables/ProfileTable';
 import ItemTable from '../tables/ItemTable';
+import PageGrid from '../PageGrid';
 
 /**
  * - insert new rel
@@ -98,76 +99,62 @@ const Watch = () => {
   }
 
   return (
-    <div className={classes.container}>
-      <Grid container style={{ width: '100%' }}>
-        <Grid container>
-          <Grid item xs={6} className={classes.gridCell}>
-            <Paper className={classes.paper}>
-              <div className={classes.header}>
-                <Typography variant="h4">Watch Content</Typography>
-                <Typography variant="subtitle1">
-                  Enter new watched content for a profile
-                </Typography>
-              </div>
-              <div className={classes.inputs}>
-                <FormControl variant="filled">
-                  <InputLabel id="profile-label">Profilo</InputLabel>
-                  <Select
-                    labelid="profile-label"
-                    value={profile}
-                    onChange={(e) => setProfile(e.target.value)}
-                  >
-                    {profiles.map((profile) => (
-                      <MenuItem
-                        key={`${profile.codice_account}_${profile.numero}`}
-                        value={profile}
-                      >
-                        {profile.nickname}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl variant="filled">
-                  <InputLabel id="item-label">Contenuto</InputLabel>
-                  <Select
-                    labelId="item-label"
-                    value={item}
-                    onChange={(e) => setItem(e.target.value)}
-                  >
-                    {items.map((item) => (
-                      <MenuItem key={item.codice} value={item}>
-                        {item.nome}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className={classes.btnWrapper}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={onSubmit}
-                  disabled={profile === '' || item === ''}
+    <PageGrid>
+      <Paper className={classes.paper}>
+        <div className={classes.header}>
+          <Typography variant="h4">Watch Content</Typography>
+          <Typography variant="subtitle1">
+            Enter new watched content for a profile
+          </Typography>
+        </div>
+        <div className={classes.inputs}>
+          <FormControl variant="filled">
+            <InputLabel id="profile-label">Profilo</InputLabel>
+            <Select
+              labelid="profile-label"
+              value={profile}
+              onChange={(e) => setProfile(e.target.value)}
+            >
+              {profiles.map((profile) => (
+                <MenuItem
+                  key={`${profile.codice_account}_${profile.numero}`}
+                  value={profile}
                 >
-                  Confirm
-                </Button>
-              </div>
-            </Paper>
-          </Grid>
-          <Grid item xs={6} className={classes.gridCell}>
-            <WatchTable watch={result} />
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid item xs={6} className={classes.gridCell}>
-            <ProfileTable profiles={profiles} />
-          </Grid>
-          <Grid item xs={6} className={classes.gridCell}>
-            <ItemTable items={items} />
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
+                  {profile.nickname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl variant="filled">
+            <InputLabel id="item-label">Contenuto</InputLabel>
+            <Select
+              labelId="item-label"
+              value={item}
+              onChange={(e) => setItem(e.target.value)}
+            >
+              {items.map((item) => (
+                <MenuItem key={item.codice} value={item}>
+                  {item.nome}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className={classes.btnWrapper}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onSubmit}
+            disabled={profile === '' || item === ''}
+          >
+            Confirm
+          </Button>
+        </div>
+      </Paper>
+      <WatchTable watch={result} />
+      <ProfileTable profiles={profiles} />
+      <ItemTable items={items} />
+    </PageGrid>
   );
 };
 

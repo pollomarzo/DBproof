@@ -16,6 +16,9 @@ import useFetch from 'react-fetch-hook';
 import moment from 'moment';
 
 import { CAST_URL, ITEM_URL } from '../constants';
+import CastTable from '../tables/CastTable';
+import ItemTable from '../tables/ItemTable';
+import PageGrid from '../PageGrid';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -27,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(3),
-    margin: theme.spacing(3),
   },
   header: {
     '& > :first-child': {
@@ -47,6 +49,15 @@ const useStyles = makeStyles((theme) => ({
   },
   btnWrapper: {
     textAlign: 'right',
+  },
+  inputsRow: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
+    '& > *': {
+      flex: '0 1 48%',
+    },
   },
 }));
 
@@ -104,39 +115,43 @@ const Cast = () => {
   }
 
   return (
-    <div className={classes.container}>
+    <PageGrid>
       <Paper className={classes.paper}>
         <Typography variant="subtitle1">Insert actor/role</Typography>
-        <div>
+        <div className={classes.inputsRow}>
           <TextField
+            variant="filled"
             label="Nome Attore"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-        </div>
-        <div>
           <TextField
+            variant="filled"
             label="Cognome Attore"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
           />
         </div>
-        <div>
-          <DatePicker value={birth} onChange={setBirth} />
+        <div className={classes.inputsRow}>
+          <DatePicker
+            label="Data di Nascita"
+            inputVariant="filled"
+            value={birth}
+            onChange={setBirth}
+          />
         </div>
-        <div>
+        <div className={classes.inputsRow}>
           <TextField
+            variant="filled"
             label="Ruolo"
             value={role}
             onChange={(e) => setRole(e.target.value)}
           />
-        </div>
-        <div>
-          <div>
+          <FormControl variant="filled">
+            <InputLabel id="item-label">Contenuto</InputLabel>
             <Select
               variant="filled"
-              label="Contenuto"
-              id="content_form"
+              labelId="item-label"
               value={item}
               onChange={(e) => setItem(e.target.value)}
             >
@@ -146,7 +161,7 @@ const Cast = () => {
                 </MenuItem>
               ))}
             </Select>
-          </div>
+          </FormControl>
         </div>
         <Button
           onClick={onSubmit}
@@ -155,11 +170,9 @@ const Cast = () => {
           Confirm
         </Button>
       </Paper>
-      <Paper className={classes.paper}>
-        <Typography>Playlists</Typography>
-        <code>{JSON.stringify(result, null, 2)}</code>
-      </Paper>
-    </div>
+      <CastTable castMembers={cast} />
+      <ItemTable items={items} />
+    </PageGrid>
   );
 };
 
