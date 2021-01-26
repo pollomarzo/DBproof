@@ -100,7 +100,7 @@ const Feedback = () => {
             contenuto: item,
             commento: comment,
           },
-    [profile, item, rating, comment]
+    [profile, item, rating, comment, type]
   );
 
   const onSubmit = async (_) => {
@@ -162,7 +162,7 @@ const Feedback = () => {
           </Select>
         </div>
         <FormControl component="fieldset">
-          <FormLabel component="legend">Gender</FormLabel>
+          <FormLabel component="legend">Tipo di Opinione</FormLabel>
           <RadioGroup
             aria-label="feedback_type"
             name="type"

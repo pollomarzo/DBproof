@@ -10,13 +10,14 @@ let watchData = [];
 let playlists = [];
 let cast = [];
 let feedback = [];
+let profiles = [
+  { codice_account: 123, numero: 1, nickname: 'giorgio' },
+  { codice_account: 123, numero: 2, nickname: 'antonio' },
+  { codice_account: 2, numero: 1, nickname: 'giovanni' },
+];
 
 app.get('/profile', (req, res) => {
-  res.status(200).json([
-    { codice_account: 123, numero: 1, nickname: 'giorgio' },
-    { codice_account: 123, numero: 2, nickname: 'antonio' },
-    { codice_account: 2, numero: 1, nickname: 'giovanni' },
-  ]);
+  res.status(200).json(profiles);
 }); //codice_account, numero
 
 app.get('/item', (req, res) => {
@@ -39,7 +40,10 @@ app.get('/feedback', (req, res) => {
   res.status(200).json(feedback);
 });
 
-app.post('/account', (req, res) => {});
+app.post('/account', (req, res) => {
+  // remember to add codice in every profile after inserting it into DB
+  // generate paypal token
+});
 
 app.post('/cast', (req, res) => {
   cast.push(req.body);
