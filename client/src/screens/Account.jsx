@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import moment from 'moment';
 import { DatePicker } from '@material-ui/pickers';
+import useFetch from 'react-fetch-hook';
 
 import { ACCOUNT_URL } from '../constants';
 import AccountTable from '../tables/AccountTable';
@@ -63,6 +64,8 @@ const useStyles = makeStyles((theme) => ({
 const Account = () => {
   const classes = useStyles();
 
+  const { data: accounts, isLoading } = useFetch(ACCOUNT_URL);
+
   // account info
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -105,7 +108,7 @@ const Account = () => {
         nome: name,
         cognome: lastName,
         abbonamento: level,
-        data_nascita: moment(birth).format('MM/YYYY'),
+        data_nascita: moment(birth).format('YYYY-MM-DD'),
         telefono: phone,
         fatt_telefono: payPhone,
         fatt_indirizzo: payAddress,
@@ -115,7 +118,8 @@ const Account = () => {
       profili: profiles,
       pagamento: payment,
       paypal: {
-        paypalEmail,
+        // rmenbed to put token here
+        email: paypalEmail,
       },
       carta: {
         nome: cardName,
@@ -161,6 +165,10 @@ const Account = () => {
       console.error(err);
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <PageGrid>
@@ -353,7 +361,7 @@ const Account = () => {
           Confirm
         </Button>
       </Paper>
-      <AccountTable accounts={result} />
+      <AccountTable accounts={result.length > 0 ? result : accounts} />
     </PageGrid>
   );
 };

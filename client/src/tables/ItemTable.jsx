@@ -29,7 +29,7 @@ const ItemTable = ({ items }) => {
               <TableCell>{item.nome}</TableCell>
               <TableCell>{item.anno}</TableCell>
               <TableCell>{item.descrizione}</TableCell>
-              <TableCell>{item.tipo}</TableCell>
+              <TableCell>{item.kind}</TableCell>
             </TableRow>
           ))}
         </TableBody>

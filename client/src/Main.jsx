@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Container, Tabs, Tab, Typography } from '@material-ui/core';
 
-import { Account, Cast, Feedback, Item, Playlist, Watch } from './screens';
+import {
+  Account,
+  Cast,
+  Feedback,
+  Item,
+  Playlist,
+  Watch,
+  General,
+} from './screens';
 
 const TabPanel = ({ children, value, index, ...other }) => {
   return (
@@ -36,6 +44,7 @@ const Main = () => {
           <Tab label="Opinione" /> {/* opinione */}
           <Tab label="Playlist" /> {/* playlist */}
           <Tab label="Guarda" />
+          <Tab label="General" />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
@@ -55,6 +64,9 @@ const Main = () => {
       </TabPanel>
       <TabPanel value={value} index={5}>
         <Watch />
+      </TabPanel>
+      <TabPanel value={value} index={6}>
+        <General />
       </TabPanel>
     </div>
   );

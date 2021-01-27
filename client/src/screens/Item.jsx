@@ -18,6 +18,8 @@ import PageGrid from '../PageGrid';
 import PlaylistTable from '../tables/PlaylistTable';
 import ProfileTable from '../tables/ProfileTable';
 import ItemTable from '../tables/ItemTable';
+import FavoriteContent from './FavoriteContent';
+import AverageRating from './AverageRating';
 
 /**
  * - insert item
@@ -68,7 +70,7 @@ const Item = () => {
 
   // kind select
   const [kind, setKind] = useState('film');
-  const kinds = ['film', 'serie TV', 'saga'];
+  const kinds = ['film', 'serieTV', 'saga'];
 
   // TV series episodes
   const [episodes, setEpisodes] = useState([]);
@@ -95,7 +97,7 @@ const Item = () => {
         kind,
       },
       episodi: episodes,
-      saga: sagaItems,
+      saga: sagaItems.map((item) => item.codice),
     }),
     [name, year, description, kind, episodes, sagaItems]
   );
@@ -173,7 +175,7 @@ const Item = () => {
         </div>
 
         {/** TV series */}
-        {kind === 'serie TV' && (
+        {kind === 'serieTV' && (
           <div>
             <div className={classes.inputsRow}>
               <TextField
@@ -270,7 +272,11 @@ const Item = () => {
           Confirm
         </Button>
       </Paper>
-      <ItemTable items={items} />
+      <Paper>
+        <AverageRating />{' '}
+      </Paper>
+      <FavoriteContent />
+      <ItemTable items={result.length > 0 ? result : items} />
     </PageGrid>
   );
 };

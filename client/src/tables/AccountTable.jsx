@@ -7,6 +7,7 @@ import {
   TableCell,
   TableRow,
 } from '@material-ui/core';
+import moment from 'moment';
 
 const AccountTable = ({ accounts }) => {
   return (
@@ -34,10 +35,12 @@ const AccountTable = ({ accounts }) => {
             <TableRow key={index}>
               <TableCell>{account.codice}</TableCell>
               <TableCell>{account.email}</TableCell>
-              <TableCell>{account.tipologia_abbonamento}</TableCell>
+              <TableCell>{account.abbonamento}</TableCell>
               <TableCell>{account.nome}</TableCell>
               <TableCell>{account.cognome}</TableCell>
-              <TableCell>{account.data_nascita}</TableCell>
+              <TableCell>
+                {moment(account.data_nascita).format('DD/MM/YYYY')}
+              </TableCell>
               <TableCell>{account.telefono}</TableCell>
               <TableCell>{account.fatt_nome}</TableCell>
               <TableCell>{account.fatt_cognome}</TableCell>

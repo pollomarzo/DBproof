@@ -89,8 +89,8 @@ const Playlist = () => {
         },
         body: JSON.stringify({
           nome: name,
-          profilo: profile,
-          account: profile.codice_account,
+          numeroProfilo: profile.numero,
+          codiceAccount: profile.codice_account,
           contenuti: inList,
         }),
       }).then((res) => res.json());
@@ -173,7 +173,7 @@ const Playlist = () => {
           Confirm
         </Button>
       </Paper>
-      <PlaylistTable playlists={result} />
+      <PlaylistTable playlists={result.length > 0 ? result : playlists} />
       <ProfileTable profiles={profiles} />
       <ItemTable items={items} />
     </PageGrid>

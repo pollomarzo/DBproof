@@ -65,6 +65,9 @@ const Watch = () => {
   const [profile, setProfile] = useState('');
   const [item, setItem] = useState('');
 
+  const { data: watchData, isLoading: isLoadingWatchData } = useFetch(
+    WATCH_URL
+  );
   const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
   const { data: profiles, isLoading: isLoadingProfiles } = useFetch(
     PROFILE_URL
@@ -73,7 +76,7 @@ const Watch = () => {
   // result obtained from database query
   const [result, setResult] = useState([]);
 
-  const isLoading = isLoadingItems || isLoadingProfiles;
+  const isLoading = isLoadingItems || isLoadingProfiles || isLoadingWatchData;
 
   const onSubmit = async () => {
     try {
@@ -151,7 +154,7 @@ const Watch = () => {
           </Button>
         </div>
       </Paper>
-      <WatchTable watch={result} />
+      <WatchTable watch={result.length > 0 ? result : watchData} />
       <ProfileTable profiles={profiles} />
       <ItemTable items={items} />
     </PageGrid>

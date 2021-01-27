@@ -7,6 +7,7 @@ import {
   TableCell,
   TableRow,
 } from '@material-ui/core';
+import moment from 'moment';
 
 const CastTable = ({ castMembers }) => {
   return (
@@ -26,7 +27,9 @@ const CastTable = ({ castMembers }) => {
               <TableCell>{member.codice}</TableCell>
               <TableCell>{member.nome}</TableCell>
               <TableCell>{member.cognome}</TableCell>
-              <TableCell>{member.data_nascita}</TableCell>
+              <TableCell>
+                {moment(member.nascita).format('DD/MM/YYYY')}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

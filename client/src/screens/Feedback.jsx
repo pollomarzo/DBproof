@@ -23,6 +23,7 @@ import PageGrid from '../PageGrid';
 import ItemTable from '../tables/ItemTable';
 import ProfileTable from '../tables/ProfileTable';
 import FeedbackTable from '../tables/FeedbackTable';
+import HigherLower from './HigherLower';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -89,6 +90,9 @@ const Feedback = () => {
   const [comment, setComment] = useState('');
 
   // initial data fetching
+  const { data: feedbacks, isLoading: isLoadingFeedbacks } = useFetch(
+    FEEDBACK_URL
+  );
   const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
   const { data: profiles, isLoading: isLoadingProfiles } = useFetch(
     PROFILE_URL
@@ -97,20 +101,24 @@ const Feedback = () => {
   // result obtained from database query
   const [result, setResult] = useState([]);
 
-  const isLoading = isLoadingItems || isLoadingProfiles;
+  const isLoading = isLoadingItems || isLoadingProfiles || isLoadingFeedbacks;
 
   const submitBody = useMemo(
     () =>
       type === 'rating'
         ? {
-            profilo: profile,
+            numeroProfilo: profile.numero,
+            codiceAccount: profile.codice_account,
             contenuto: item,
             punteggio: rating,
+            tipo: type,
           }
         : {
-            profilo: profile,
+            numeroProfilo: profile.numero,
+            codiceAccount: profile.codice_account,
             contenuto: item,
             commento: comment,
+            tipo: type,
           },
     [profile, item, rating, comment, type]
   );
@@ -185,7 +193,7 @@ const Feedback = () => {
           >
             <FormControlLabel value="rating" control={<Radio />} label="Voto" />
             <FormControlLabel
-              value="comment"
+              value="commento"
               control={<Radio />}
               label="Commento"
             />
@@ -214,7 +222,7 @@ const Feedback = () => {
           </>
         )}
         {/**COMMENT SECTION */}
-        {type === 'comment' && (
+        {type === 'commento' && (
           <>
             <div>
               <TextField
@@ -239,7 +247,10 @@ const Feedback = () => {
           </>
         )}
       </Paper>
-      <FeedbackTable feedbacks={result} />
+      <Paper>
+        <HigherLower />
+      </Paper>
+      <FeedbackTable feedbacks={result.length > 0 ? result : feedbacks} />
       <ProfileTable profiles={profiles} />
       <ItemTable items={items} />
     </PageGrid>
