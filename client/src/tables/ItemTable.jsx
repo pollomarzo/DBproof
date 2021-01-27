@@ -6,7 +6,6 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  makeStyles,
 } from '@material-ui/core';
 
 const ItemTable = ({ items }) => {

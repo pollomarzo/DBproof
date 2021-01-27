@@ -1,16 +1,22 @@
 const cors = require('cors');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const express = require("express")
+const express = require('express');
 const app = express();
-const path = require("path");
+const path = require('path');
 const PORT = process.env.PORT || 5000;
 
-app.use(process.env.NODE_ENV === "development"  ? cors() : cors({origin: "http://34.65.94.226"}));
+console.log(process.env.NODE_ENV);
+
+app.use(
+  process.env.NODE_ENV === 'development'
+    ? cors()
+    : cors({ origin: 'http://34.65.94.226' })
+);
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-const dbConnection = mysql.createConnection({
+var dbConnection = mysql.createConnection({
   host: 'eu-cdbr-west-03.cleardb.net',
   user: 'bbeed202ff8e38',
   password: '0d6d5aca',
@@ -24,6 +30,37 @@ dbConnection.connect((err) => {
   }
   console.log('Connection established');
 });
+
+function handleDisconnect(conn) {
+  conn.on('error', function (err) {
+    if (!err.fatal) {
+      return;
+    }
+
+    if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
+      throw err;
+    }
+
+    console.log('Re-connecting lost connection: ' + err.stack);
+
+    dbConnection = mysql.createConnection({
+      host: 'eu-cdbr-west-03.cleardb.net',
+      user: 'bbeed202ff8e38',
+      password: '0d6d5aca',
+      database: 'heroku_3b70c2a35721f9d',
+    });
+    handleDisconnect(dbConnection);
+    dbConnection.connect((err) => {
+      if (err) {
+        console.log('Error connecting to Db');
+        return;
+      }
+      console.log('Connection established');
+    });
+  });
+}
+
+handleDisconnect(dbConnection);
 
 let watchData = [];
 let playlists = [];
@@ -105,6 +142,14 @@ app.get('/feedback', (req, res) => {
 app.get('/watch', (req, res) => {
   // no params. exp res: all watched content
   dbConnection.query('SELECT * FROM guarda', (err, rows) => {
+    if (err) throw err;
+    res.status(200).json(rows);
+  });
+});
+
+app.get('/collabora', (req, res) => {
+  // no params. exp res: all watched content
+  dbConnection.query('SELECT * FROM collabora', (err, rows) => {
     if (err) throw err;
     res.status(200).json(rows);
   });
@@ -198,6 +243,24 @@ app.get('/saga', (req, res) => {
       res.status(200).json(rows);
     }
   );
+});
+
+app.get('/sagas', (req, res) => {
+  // itemCode. exp res: get all content in a saga
+  // query 17
+  dbConnection.query('SELECT * FROM saga', (err, rows) => {
+    if (err) throw err;
+    res.status(200).json(rows);
+  });
+});
+
+app.get('/episodes', (req, res) => {
+  // itemCode. exp res: get all content in a saga
+  // query 17
+  dbConnection.query('SELECT * FROM episodio', (err, rows) => {
+    if (err) throw err;
+    res.status(200).json(rows);
+  });
 });
 
 app.get('/tv', (req, res) => {
@@ -309,9 +372,17 @@ app.post('/cast', (req, res) => {
         };
         dbConnection.query('INSERT INTO collabora SET ?', collabora, (err) => {
           if (err) throw err;
-          dbConnection.query('SELECT * FROM cast', (err, rows) => {
+          dbConnection.query('SELECT * FROM cast', (err, castrows) => {
             if (err) throw err;
-            res.status(200).json(rows);
+            dbConnection.query(
+              'SELECT * FROM collabora',
+              (err, collaborarows) => {
+                if (err) throw err;
+                res
+                  .status(200)
+                  .json({ cast: castrows, collabora: collaborarows });
+              }
+            );
           });
         });
       } else {
@@ -336,9 +407,17 @@ app.post('/cast', (req, res) => {
               }
             );
 
-            dbConnection.query('SELECT * FROM cast', (err, rows) => {
+            dbConnection.query('SELECT * FROM cast', (err, castrows) => {
               if (err) throw err;
-              res.status(200).json(rows);
+              dbConnection.query(
+                'SELECT * FROM collabora',
+                (err, collaborarows) => {
+                  if (err) throw err;
+                  res
+                    .status(200)
+                    .json({ cast: castrows, collabora: collaborarows });
+                }
+              );
             });
           }
         );
@@ -410,7 +489,13 @@ app.post('/item', (req, res) => {
 
       dbConnection.query('SELECT * FROM contenuto', (err, rows) => {
         if (err) throw err;
-        res.status(200).json(rows);
+        dbConnection.query('SELECT * FROM episodio', (err, episodes) => {
+          if (err) throw err;
+          dbConnection.query('SELECT * FROM saga', (err, sagas) => {
+            if (err) throw err;
+            res.status(200).json({ items: rows, episodes, sagas });
+          });
+        });
       });
     }
   );
@@ -453,8 +538,8 @@ app.post('/watch', (req, res) => {
   });
 });
 
-app.get('*', (req,res) =>{
-    res.sendFile(path.join(__dirname+'/client/build/index.html'));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));

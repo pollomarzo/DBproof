@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 
-const dbConnection = mysql.createConnection({
+var dbConnection = mysql.createConnection({
   host: 'eu-cdbr-west-03.cleardb.net',
   user: 'bbeed202ff8e38',
   password: '0d6d5aca',
@@ -14,6 +14,37 @@ dbConnection.connect((err) => {
   }
   console.log('Connection established');
 });
+
+function handleDisconnect(conn) {
+  conn.on('error', function (err) {
+    if (!err.fatal) {
+      return;
+    }
+
+    if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
+      throw err;
+    }
+
+    console.log('Re-connecting lost connection: ' + err.stack);
+
+    dbConnection = mysql.createConnection({
+      host: 'eu-cdbr-west-03.cleardb.net',
+      user: 'bbeed202ff8e38',
+      password: '0d6d5aca',
+      database: 'heroku_3b70c2a35721f9d',
+    });
+    handleDisconnect(dbConnection);
+    dbConnection.connect((err) => {
+      if (err) {
+        console.log('Error connecting to Db');
+        return;
+      }
+      console.log('Connection established');
+    });
+  });
+}
+
+handleDisconnect(dbConnection);
 //working
 // const account = {
 //   email: 'test@test.com',
@@ -155,13 +186,13 @@ dbConnection.connect((err) => {
 //   console.log(rows);
 // });
 
-var nome = 'Leonardo';
-var cognome = 'Di Caprio';
+// var nome = 'Leonardo';
+// var cognome = 'Di Caprio';
 
-dbConnection.query(
-  `SELECT * FROM cast WHERE nome = '${nome}' AND cognome = '${cognome}'`,
-  (err, rows) => {
-    if (err) console.log(err);
-    console.log(rows);
-  }
-);
+// dbConnection.query(
+//   `SELECT * FROM cast WHERE nome = '${nome}' AND cognome = '${cognome}'`,
+//   (err, rows) => {
+//     if (err) console.log(err);
+//     console.log(rows);
+//   }
+// );

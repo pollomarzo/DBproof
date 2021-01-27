@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { AppBar, Container, Tabs, Tab, Typography } from '@material-ui/core';
+import { AppBar, Container, Tabs, Tab } from '@material-ui/core';
 
 import {
   Account,
@@ -34,39 +34,40 @@ const Main = () => {
     setValue(newValue);
   };
 
+  /**General, Account, Cast, Contenuto, Guarda, Opinione, Playlist */
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        <Tabs value={value} onChange={handleChange}>
+        <Tabs value={value} onChange={handleChange} variant="fullWidth">
+          <Tab label="General" />
           <Tab label="Account" /> {/* account, profilo, carta, paypal */}
           <Tab label="Cast" /> {/* membro del cast */}
           <Tab label="Contenuto" /> {/* contenuto, episodio, saga */}
+          <Tab label="Guarda" />
           <Tab label="Opinione" /> {/* opinione */}
           <Tab label="Playlist" /> {/* playlist */}
-          <Tab label="Guarda" />
-          <Tab label="General" />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <Account />
+        <General />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Cast />
+        <Account />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Item />
+        <Cast />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <Feedback />
+        <Item />
       </TabPanel>
       <TabPanel value={value} index={4}>
-        <Playlist />
-      </TabPanel>
-      <TabPanel value={value} index={5}>
         <Watch />
       </TabPanel>
+      <TabPanel value={value} index={5}>
+        <Feedback />
+      </TabPanel>
       <TabPanel value={value} index={6}>
-        <General />
+        <Playlist />
       </TabPanel>
     </div>
   );

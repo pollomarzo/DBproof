@@ -9,15 +9,15 @@ import {
   InputLabel,
   FormControl,
   TextField,
+  Divider,
 } from '@material-ui/core';
-import { useForm } from 'react-hook-form';
 import useFetch from 'react-fetch-hook';
 
-import { ITEM_URL } from '../constants';
+import { ITEM_URL, SAGAS_URL, EPISODES_URL } from '../constants';
 import PageGrid from '../PageGrid';
-import PlaylistTable from '../tables/PlaylistTable';
-import ProfileTable from '../tables/ProfileTable';
 import ItemTable from '../tables/ItemTable';
+import EpisodesTable from '../tables/EpisodesTable';
+import SagaTable from '../tables/SagaTable';
 import FavoriteContent from './FavoriteContent';
 import AverageRating from './AverageRating';
 
@@ -84,9 +84,13 @@ const Item = () => {
   const [item, setItem] = useState({});
 
   // result obtained from database query
-  const [result, setResult] = useState([]);
+  const [result, setResult] = useState({ items: [], episodes: [], sagas: [] });
 
   const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
+  const { data: oldEpisodes, isLoading: isLoadingOldEpisodes } = useFetch(
+    EPISODES_URL
+  );
+  const { data: sagas, isLoading: isLoadingSagas } = useFetch(SAGAS_URL);
 
   const submitBody = useMemo(
     () => ({
@@ -118,7 +122,7 @@ const Item = () => {
     }
   };
 
-  const isLoading = isLoadingItems;
+  const isLoading = isLoadingItems || isLoadingOldEpisodes || isLoadingSagas;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -130,7 +134,6 @@ const Item = () => {
         <Typography variant="subtitle1">
           Insert new playlist with related content
         </Typography>
-
         {/** content properties */}
         <div className={classes.inputsRow}>
           <TextField
@@ -154,7 +157,6 @@ const Item = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-
         {/** kind select */}
         <div style={{ marginBottom: 16 }}>
           <FormControl variant="filled" fullWidth>
@@ -173,7 +175,6 @@ const Item = () => {
             </Select>
           </FormControl>
         </div>
-
         {/** TV series */}
         {kind === 'serieTV' && (
           <div>
@@ -226,7 +227,6 @@ const Item = () => {
             ))}
           </div>
         )}
-
         {/** Saga */}
         {kind === 'saga' && (
           <>
@@ -268,15 +268,29 @@ const Item = () => {
             ))}
           </>
         )}
-        <Button onClick={onSubmit} disabled={name === ''}>
+        <Button
+          style={{ marginBottom: 16 }}
+          variant="contained"
+          color="primary"
+          onClick={onSubmit}
+          disabled={name === ''}
+        >
           Confirm
         </Button>
+        <Divider />
+        <div style={{ marginTop: 15 }} className={classes.inputsRow}>
+          <AverageRating />
+        </div>
+        <Divider />
+        <div style={{ marginTop: 15 }} className={classes.inputsRow}>
+          <FavoriteContent />
+        </div>
       </Paper>
-      <Paper>
-        <AverageRating />{' '}
-      </Paper>
-      <FavoriteContent />
-      <ItemTable items={result.length > 0 ? result : items} />
+      <ItemTable items={result.items.length > 0 ? result.items : items} />
+      <EpisodesTable
+        episodes={result.episodes.length > 0 ? result.episodes : oldEpisodes}
+      />
+      <SagaTable saga={result.sagas.length > 0 ? result.sagas : sagas} />
     </PageGrid>
   );
 };

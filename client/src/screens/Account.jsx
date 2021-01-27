@@ -12,7 +12,6 @@ import {
   FormControlLabel,
   FormLabel,
   TextField,
-  Slider,
   RadioGroup,
 } from '@material-ui/core';
 import moment from 'moment';
@@ -64,7 +63,9 @@ const useStyles = makeStyles((theme) => ({
 const Account = () => {
   const classes = useStyles();
 
-  const { data: accounts, isLoading } = useFetch(ACCOUNT_URL);
+  const { data: accounts, isLoading: isLoadingAccounts } = useFetch(
+    ACCOUNT_URL
+  );
 
   // account info
   const [email, setEmail] = useState('');
@@ -147,6 +148,7 @@ const Account = () => {
       paypalEmail,
       phone,
       profiles,
+      birth,
     ]
   );
 
@@ -166,7 +168,7 @@ const Account = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoadingAccounts) {
     return <div>Loading...</div>;
   }
 
@@ -226,28 +228,32 @@ const Account = () => {
         </div>
 
         {/** profiles and nicknames */}
-        <TextField
-          variant="filled"
-          label="Nickname"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-        />
-        <Button
-          onClick={() =>
-            setProfiles([
-              ...profiles,
-              {
-                numero: profiles.length,
-                nickname: nickname,
-              },
-            ])
-          }
-          disabled={profiles.length === 5}
-        >
-          Aggiungi profilo
-        </Button>
+        <div className={classes.inputsRow}>
+          <TextField
+            variant="filled"
+            label="Nickname"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() =>
+              setProfiles([
+                ...profiles,
+                {
+                  numero: profiles.length,
+                  nickname: nickname,
+                },
+              ])
+            }
+            disabled={profiles.length === 5}
+          >
+            Aggiungi profilo
+          </Button>
+        </div>
         <div>
-          <Typography variant="body2">
+          <Typography variant="body2" style={{ marginBottom: 16 }}>
             Current profiles in this account:
           </Typography>
           {profiles.map((prof, idx) => (
@@ -286,80 +292,95 @@ const Account = () => {
         </div>
 
         {/** radio for selecting payment type */}
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Tipo di pagamento</FormLabel>
-          <RadioGroup
-            aria-label="payment_type"
-            name="payment_type"
-            value={payment}
-            onChange={(e) => setPayment(e.target.value)}
-          >
-            <FormControlLabel
-              value="paypal"
-              control={<Radio />}
-              label="Paypal"
-            />
-            <FormControlLabel
-              value="card"
-              control={<Radio />}
-              label="Carta di credito"
-            />
-          </RadioGroup>
-        </FormControl>
+        <div className={classes.inputsRow}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Tipo di pagamento</FormLabel>
+            <RadioGroup
+              aria-label="payment_type"
+              name="payment_type"
+              value={payment}
+              onChange={(e) => setPayment(e.target.value)}
+            >
+              <FormControlLabel
+                value="paypal"
+                control={<Radio />}
+                label="Paypal"
+              />
+              <FormControlLabel
+                value="card"
+                control={<Radio />}
+                label="Carta di credito"
+              />
+            </RadioGroup>
+          </FormControl>
+        </div>
 
         {/** card */}
         {payment === 'card' && (
           <>
-            <TextField
-              variant="filled"
-              label="Nome sulla carta"
-              value={cardName}
-              onChange={(e) => setCardName(e.target.value)}
-            />
-            <TextField
-              variant="filled"
-              label="Cognome sulla carta"
-              value={cardLastName}
-              onChange={(e) => setCardLastName(e.target.value)}
-            />
-            <TextField
-              variant="filled"
-              label="Numero di carta"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-            />
-            <DatePicker
-              inputVariant="filled"
-              variant="inline"
-              openTo="year"
-              views={['year', 'month']}
-              label="Expiry date"
-              value={cardDate}
-              onChange={setCardDate}
-            />
-            <TextField
-              variant="filled"
-              label="CVV"
-              value={cvv}
-              onChange={(e) => setCvv(e.target.value)}
-            />
+            <div className={classes.inputsRow}>
+              <TextField
+                variant="filled"
+                label="Nome sulla carta"
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
+              />
+              <TextField
+                variant="filled"
+                label="Cognome sulla carta"
+                value={cardLastName}
+                onChange={(e) => setCardLastName(e.target.value)}
+              />
+            </div>
+            <div className={classes.inputsRow}>
+              <TextField
+                variant="filled"
+                label="Numero di carta"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+              />
+              <DatePicker
+                inputVariant="filled"
+                variant="inline"
+                openTo="year"
+                views={['year', 'month']}
+                label="Expiry date"
+                value={cardDate}
+                onChange={setCardDate}
+              />
+            </div>
+            <div className={classes.inputsRow}>
+              <TextField
+                variant="filled"
+                label="CVV"
+                value={cvv}
+                onChange={(e) => setCvv(e.target.value)}
+              />
+            </div>
           </>
         )}
         {/** paypal */}
         {payment === 'paypal' && (
-          <>
+          <div className={classes.inputsRow}>
             <TextField
               variant="filled"
               label="Paypal Email"
               value={paypalEmail}
               onChange={(e) => setPaypalEmail(e.target.value)}
             />
-          </>
+          </div>
         )}
 
-        <Button onClick={onSubmit} disabled={false}>
-          Confirm
-        </Button>
+        <div className={classes.inputsRow}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onSubmit}
+            disabled={false}
+          >
+            Confirm
+          </Button>
+        </div>
       </Paper>
       <AccountTable accounts={result.length > 0 ? result : accounts} />
     </PageGrid>

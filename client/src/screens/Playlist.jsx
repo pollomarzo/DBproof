@@ -10,7 +10,6 @@ import {
   FormControl,
   TextField,
 } from '@material-ui/core';
-import { useForm } from 'react-hook-form';
 import useFetch from 'react-fetch-hook';
 
 import { PLAYLIST_URL, ITEM_URL, PROFILE_URL } from '../constants';
@@ -154,19 +153,27 @@ const Playlist = () => {
         </div>
         <Button
           variant="contained"
+          color="primary"
           onClick={() => setInList([...inList, item])}
           disabled={
             item === '' ||
             !!inList.find((content) => item.codice === content.codice)
           }
+          style={{ marginBottom: 8 }}
         >
           Aggiungi contenuto
         </Button>
-        <Typography variant="body2">Currently in list: </Typography>
+        <Typography variant="body2" style={{ marginBottom: 8 }}>
+          Currently in list:{' '}
+        </Typography>
         {inList.map((item) => (
-          <div key={item.codice}>{item.nome}</div>
+          <div key={item.codice} style={{ marginBottom: 8 }}>
+            {item.nome}
+          </div>
         ))}
         <Button
+          variant="contained"
+          color="primary"
           onClick={onSubmit}
           disabled={profile === '' || name === '' || inList.length === 0}
         >

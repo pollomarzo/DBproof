@@ -2,33 +2,34 @@ import { useState } from 'react';
 import {
   Select,
   MenuItem,
-  Paper,
-  Typography,
-  makeStyles,
   Button,
   InputLabel,
   FormControl,
   Radio,
   FormControlLabel,
   FormLabel,
-  TextField,
   Slider,
   RadioGroup,
+  makeStyles,
 } from '@material-ui/core';
 import useFetch from 'react-fetch-hook';
 
-import WatchTable from '../tables/WatchTable';
-import ProfileTable from '../tables/ProfileTable';
-import ItemTable from '../tables/ItemTable';
-import PageGrid from '../PageGrid';
-import {
-  FAVORITES_URL,
-  PROFILE_URL,
-  RATEPROFILE_URL,
-  RATEOVERALL_URL,
-} from '../constants';
+import { PROFILE_URL, RATEPROFILE_URL, RATEOVERALL_URL } from '../constants';
+
+const useStyles = makeStyles((theme) => ({
+  inputsRow: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
+    '& > *': {
+      flex: '0 1 48%',
+    },
+  },
+}));
 
 const HigherLower = () => {
+  const classes = useStyles();
   // either profile or overall
   const [type, setType] = useState('profile');
   const [profile, setProfile] = useState('');
@@ -83,26 +84,28 @@ const HigherLower = () => {
   }
 
   return (
-    <>
-      <FormControl component="fieldset">
-        <FormLabel component="legend">Maggiore o minore</FormLabel>
-        <RadioGroup
-          name="maggiore_minore"
-          value={range}
-          onChange={(e) => setRange(e.target.value)}
-        >
-          <FormControlLabel
-            value="higher"
-            control={<Radio />}
-            label="Più alto"
-          />
-          <FormControlLabel
-            value="lower"
-            control={<Radio />}
-            label="Più basso"
-          />
-        </RadioGroup>
-      </FormControl>
+    <div>
+      <div className={classes.inputsRow}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Maggiore o minore</FormLabel>
+          <RadioGroup
+            name="maggiore_minore"
+            value={range}
+            onChange={(e) => setRange(e.target.value)}
+          >
+            <FormControlLabel
+              value="higher"
+              control={<Radio />}
+              label="Più alto"
+            />
+            <FormControlLabel
+              value="lower"
+              control={<Radio />}
+              label="Più basso"
+            />
+          </RadioGroup>
+        </FormControl>
+      </div>
       <Slider
         value={rating}
         onChange={(_, newValue) => setRating(newValue)}
@@ -130,49 +133,51 @@ const HigherLower = () => {
         </RadioGroup>
       </FormControl>
 
-      {type === 'profilo' && (
-        <>
-          <FormControl variant="filled">
-            <InputLabel id="profile-label">Profilo</InputLabel>
-            <Select
-              labelid="profile-label"
-              value={profile}
-              onChange={(e) => setProfile(e.target.value)}
+      <div>
+        {type === 'profilo' && (
+          <div className={classes.inputsRow}>
+            <FormControl variant="filled">
+              <InputLabel id="profile-label">Profilo</InputLabel>
+              <Select
+                labelid="profile-label"
+                value={profile}
+                onChange={(e) => setProfile(e.target.value)}
+              >
+                {profiles.map((profile) => (
+                  <MenuItem
+                    key={`${profile.codice_account}_${profile.numero}`}
+                    value={profile}
+                  >
+                    {profile.nickname}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onRequestProfile}
             >
-              {profiles.map((profile) => (
-                <MenuItem
-                  key={`${profile.codice_account}_${profile.numero}`}
-                  value={profile}
-                >
-                  {profile.nickname}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onRequestProfile}
-          >
-            Richiedi contenuti
-          </Button>
-        </>
-      )}
+              Richiedi contenuti
+            </Button>
+          </div>
+        )}
 
-      {type === 'overall' && (
-        <>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onRequestOverall}
-          >
-            Richiedi contenuti
-          </Button>
-        </>
-      )}
+        {type === 'overall' && (
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onRequestOverall}
+            >
+              Richiedi contenuti
+            </Button>
+          </>
+        )}
+      </div>
       {result.length > 0 &&
         result.map((res, idx) => <div key={idx}>{res.nome}</div>)}
-    </>
+    </div>
   );
 };
 

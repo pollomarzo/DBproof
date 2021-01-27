@@ -1,14 +1,4 @@
-import {
-  MenuItem,
-  Paper,
-  Typography,
-  makeStyles,
-  Button,
-  Select,
-  InputLabel,
-  FormControl,
-  Grid,
-} from '@material-ui/core';
+import { makeStyles, Grid } from '@material-ui/core';
 
 /**
  * - insert new rel
@@ -28,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
   },
   gridCell: {
     padding: theme.spacing(3),
+    '& > *': {
+      maxHeight: 600,
+      overflow: 'auto',
+    },
   },
 }));
 

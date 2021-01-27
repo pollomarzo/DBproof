@@ -14,8 +14,8 @@ import {
   TextField,
   Slider,
   RadioGroup,
+  Divider,
 } from '@material-ui/core';
-import { useForm } from 'react-hook-form';
 import useFetch from 'react-fetch-hook';
 
 import { ITEM_URL, PROFILE_URL, FEEDBACK_URL } from '../constants';
@@ -246,9 +246,10 @@ const Feedback = () => {
             </Button>
           </>
         )}
-      </Paper>
-      <Paper>
-        <HigherLower />
+        <Divider />
+        <div style={{ marginTop: 10 }}>
+          <HigherLower />
+        </div>
       </Paper>
       <FeedbackTable feedbacks={result.length > 0 ? result : feedbacks} />
       <ProfileTable profiles={profiles} />

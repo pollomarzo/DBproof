@@ -2,25 +2,12 @@ import { useState } from 'react';
 import {
   Select,
   MenuItem,
-  Paper,
-  Typography,
-  makeStyles,
   Button,
   InputLabel,
   FormControl,
-  Radio,
-  FormControlLabel,
-  FormLabel,
-  TextField,
-  Slider,
-  RadioGroup,
 } from '@material-ui/core';
 import useFetch from 'react-fetch-hook';
 
-import WatchTable from '../tables/WatchTable';
-import ProfileTable from '../tables/ProfileTable';
-import ItemTable from '../tables/ItemTable';
-import PageGrid from '../PageGrid';
 import { ITEM_URL, AVERAGERATING_URL } from '../constants';
 
 const AverageRating = () => {
@@ -68,7 +55,9 @@ const AverageRating = () => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={onRequestAverage}>Voto medio</Button>
+      <Button variant="contained" color="primary" onClick={onRequestAverage}>
+        Voto medio
+      </Button>
       {average !== '' && (
         <div>
           <span>{item.nome}: </span>

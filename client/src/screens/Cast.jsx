@@ -11,13 +11,13 @@ import {
   TextField,
 } from '@material-ui/core';
 import { DatePicker } from '@material-ui/pickers';
-import { useForm } from 'react-hook-form';
 import useFetch from 'react-fetch-hook';
 import moment from 'moment';
 
-import { CAST_URL, ITEM_URL } from '../constants';
+import { CAST_URL, COLLABORA_URL, ITEM_URL } from '../constants';
 import CastTable from '../tables/CastTable';
 import ItemTable from '../tables/ItemTable';
+import CollaboraTable from '../tables/CollaboraTable';
 import PageGrid from '../PageGrid';
 
 const useStyles = makeStyles((theme) => ({
@@ -82,11 +82,14 @@ const Cast = () => {
   // initial data fetching
   const { data: cast, isLoading: isLoadingCast } = useFetch(CAST_URL);
   const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
+  const { data: collabora, isLoading: isLoadingCollabora } = useFetch(
+    COLLABORA_URL
+  );
 
   // result obtained from database query
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState({ cast: [], collabora: [] });
 
-  const isLoading = isLoadingCast || isLoadingItems;
+  const isLoading = isLoadingCast || isLoadingItems || isLoadingCollabora;
 
   const onSubmit = async (_) => {
     try {
@@ -170,8 +173,11 @@ const Cast = () => {
           Confirm
         </Button>
       </Paper>
-      <CastTable castMembers={cast} />
+      <CastTable castMembers={result.cast.length > 0 ? result.cast : cast} />
       <ItemTable items={items} />
+      <CollaboraTable
+        collabora={result.collabora.length > 0 ? result.collabora : collabora}
+      />
     </PageGrid>
   );
 };

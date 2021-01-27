@@ -1,28 +1,34 @@
 import { useState } from 'react';
 import {
   MenuItem,
-  Paper,
-  Typography,
-  makeStyles,
   Button,
   Select,
   InputLabel,
   FormControl,
-  Grid,
+  makeStyles,
 } from '@material-ui/core';
 import useFetch from 'react-fetch-hook';
 
-import WatchTable from '../tables/WatchTable';
-import ProfileTable from '../tables/ProfileTable';
-import ItemTable from '../tables/ItemTable';
-import PageGrid from '../PageGrid';
-import { CASH_URL, FAVORITES_URL, ITEM_URL, PROFILE_URL } from '../constants';
+import { FAVORITES_URL, PROFILE_URL } from '../constants';
+
+const useStyles = makeStyles((theme) => ({
+  inputsRow: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
+    '& > *': {
+      flex: '0 1 48%',
+    },
+  },
+}));
 
 const FavoriteContent = () => {
+  const classes = useStyles();
+
   const [profile, setProfile] = useState('');
   const [favorites, setFavorites] = useState([]);
 
-  const { data: items, isLoading: isLoadingItems } = useFetch(ITEM_URL);
   const { data: profiles, isLoading: isLoadingProfiles } = useFetch(
     PROFILE_URL
   );
@@ -42,14 +48,14 @@ const FavoriteContent = () => {
       console.error(err);
     }
   };
-  const isLoading = isLoadingItems || isLoadingProfiles;
+  const isLoading = isLoadingProfiles;
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <>
+    <div className={classes.inputsRow}>
       {/** favorite content */}
       <FormControl variant="filled">
         <InputLabel id="profile-label">Profilo</InputLabel>
@@ -73,7 +79,7 @@ const FavoriteContent = () => {
       </Button>
       {favorites.length > 0 &&
         favorites.map((film, idx) => <div key={idx}>{film.nome}</div>)}
-    </>
+    </div>
   );
 };
 

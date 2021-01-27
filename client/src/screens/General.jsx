@@ -1,22 +1,17 @@
 import { useState } from 'react';
 import {
-  MenuItem,
   Paper,
   Typography,
   makeStyles,
   Button,
-  Select,
-  InputLabel,
-  FormControl,
-  Grid,
+  Divider,
 } from '@material-ui/core';
 import useFetch from 'react-fetch-hook';
 
-import WatchTable from '../tables/WatchTable';
 import ProfileTable from '../tables/ProfileTable';
 import ItemTable from '../tables/ItemTable';
 import PageGrid from '../PageGrid';
-import { CASH_URL, FAVORITES_URL, ITEM_URL, PROFILE_URL } from '../constants';
+import { CASH_URL, ITEM_URL, PROFILE_URL } from '../constants';
 import Saga from './Saga';
 import TV from './TV';
 
@@ -49,9 +44,6 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
       marginBottom: theme.spacing(4),
     },
-  },
-  btnWrapper: {
-    textAlign: 'right',
   },
 }));
 
@@ -96,15 +88,17 @@ const General = () => {
           </Typography>
         </div>
         {/** ask for cash */}
-        <div className={classes.btnWrapper}>
+        <div style={{ marginBottom: 16 }}>
           <Button variant="contained" color="primary" onClick={onRequestCash}>
             Richiedi entrate
           </Button>
         </div>
         <div>{cash !== '' && cash}</div>
+        <Divider style={{ marginBottom: 10 }} />
+        <Saga />
+        <Divider style={{ marginBottom: 10 }} />
+        <TV />
       </Paper>
-      <Saga />
-      <TV />
       <ProfileTable profiles={profiles} />
       <ItemTable items={items} />
     </PageGrid>
